@@ -1,7 +1,7 @@
 # sndcld
 Soundcloud downloader made using Rust
 
-## Build
+## Build deb
 
 ```sh
 cargo install cargo-deb
