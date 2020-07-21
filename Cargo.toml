@@ -15,6 +15,7 @@ keywords = ["soundcloud", "downloader"]
 [dependencies]
 clap = "2.33.0"
 dirs = "3.0.1"
+reqwest = { version = "0.10.6", features = ["blocking"] }
 
 [package.metadata.deb]
 maintainer = "DEADBLACKCLOVER <deadblackclover@protonmail.com>"
