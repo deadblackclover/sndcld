@@ -16,6 +16,7 @@ keywords = ["soundcloud", "downloader"]
 clap = "2.33.0"
 dirs = "3.0.1"
 reqwest = { version = "0.10.6", features = ["blocking"] }
+serde_json = "1.0.56"
 
 [package.metadata.deb]
 maintainer = "DEADBLACKCLOVER <deadblackclover@protonmail.com>"
