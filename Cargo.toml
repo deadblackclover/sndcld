@@ -14,6 +14,7 @@ keywords = ["soundcloud", "downloader"]
 
 [dependencies]
 clap = "2.33.0"
+dirs = "3.0.1"
 
 [package.metadata.deb]
 maintainer = "DEADBLACKCLOVER <deadblackclover@protonmail.com>"
