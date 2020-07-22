@@ -3,8 +3,11 @@ use std::fs;
 use std::fs::File;
 use std::path::Path;
 
+/// Application configuration
 pub struct Config {
+    /// Application settings file path
     pub path: String,
+    /// Token for Soundcloud API
     pub token: String,
 }
 

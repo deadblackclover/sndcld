@@ -67,6 +67,7 @@ pub fn playlist(config: &Config, url: String) {
     }
 }
 
+/// Function for get requests
 fn get(url: String) -> (String, String) {
     let client = Client::new();
     let mut res = client
@@ -85,6 +86,7 @@ fn get(url: String) -> (String, String) {
     }
 }
 
+/// Function for downloading files
 fn download(url: String, name: String) {
     let audio_path = match dirs::audio_dir() {
         Some(path) => format!("{}/{}", path.display(), name),
