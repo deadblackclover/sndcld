@@ -59,7 +59,6 @@ pub fn playlist(config: &Config, url: String) {
 
     if tracks.is_array() {
         for track in tracks.as_array().unwrap() {
-            print!("\x1B[2J");
             let object = track.as_object().unwrap();
             let permalink_url = object.get("permalink_url").unwrap().as_str().unwrap();
             song(config, String::from(permalink_url));
