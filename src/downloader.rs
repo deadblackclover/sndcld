@@ -44,7 +44,28 @@ pub fn song(config: &Config, url: String) {
 }
 
 /// Download playlist
-pub fn playlist(config: &Config, url: String) {}
+pub fn playlist(config: &Config, url: String) {
+    let resolve = format!(
+        "{}resolve.json?url={}&client_id={}&format=json&_status_code_map[302]=200",
+        API, url, config.token
+    );
+
+    let (location, _) = get(String::from(resolve));
+
+    let (_, body) = get(location);
+    let json: Value = serde_json::from_str(&body).unwrap();
+
+    let tracks = &json["tracks"];
+
+    if tracks.is_array() {
+        for track in tracks.as_array().unwrap() {
+            print!("\x1B[2J");
+            let object = track.as_object().unwrap();
+            let permalink_url = object.get("permalink_url").unwrap().as_str().unwrap();
+            song(config, String::from(permalink_url));
+        }
+    }
+}
 
 fn get(url: String) -> (String, String) {
     let client = Client::new();
