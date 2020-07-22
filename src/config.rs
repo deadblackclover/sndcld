@@ -9,6 +9,7 @@ pub struct Config {
 }
 
 impl Config {
+    /// Init config
     pub fn init() -> Config {
         let config_path = match dirs::home_dir() {
             Some(path) => format!("{}/{}", path.display(), ".sndcld-token"),
@@ -29,6 +30,7 @@ impl Config {
         }
     }
 
+    /// Save token for Soundcloud API
     pub fn save_token(&self, token: String) {
         fs::write(&self.path, token).unwrap();
         println!("Token saved successfully!");
