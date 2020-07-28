@@ -1,10 +1,10 @@
 //! Soundcloud downloader made using Rust
-//! 
+//!
 //! ## Install
 //! If you have Rust: `cargo install sndcld`
-//! 
+//!
 //! ## Usage
-//! 
+//!
 //! ```bash
 //! sndcld 0.1.0
 //! DEADBLACKCLOVER <deadblackclover@protonmail.com>
@@ -66,8 +66,10 @@ fn main() {
     let config = Config::init();
 
     if let Some(matches) = matches.subcommand_matches("token") {
-        let token = matches.value_of("TOKEN").unwrap();
-        config.save_token(String::from(token));
+        let token = matches.value_of("TOKEN").expect("Token not found");
+        config
+            .save_token(String::from(token))
+            .expect("Error saving file");
     }
 
     if let Some(matches) = matches.subcommand_matches("song") {

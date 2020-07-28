@@ -22,10 +22,10 @@ impl Config {
         let mut _config_token = String::from("");
 
         if !Path::new(&config_path).exists() {
-            File::create(&config_path).unwrap();
+            File::create(&config_path).expect("Failed to create file");
         }
 
-        _config_token = fs::read_to_string(&config_path).expect("");
+        _config_token = fs::read_to_string(&config_path).expect("Failed to read string");
 
         Config {
             path: config_path,
@@ -34,8 +34,9 @@ impl Config {
     }
 
     /// Save token for Soundcloud API
-    pub fn save_token(&self, token: String) {
-        fs::write(&self.path, token).unwrap();
+    pub fn save_token(&self, token: String) -> Result<(), std::io::Error> {
+        fs::write(&self.path, token)?;
         println!("Token saved successfully!");
+        Ok(())
     }
 }
