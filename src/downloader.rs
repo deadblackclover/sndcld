@@ -2,7 +2,7 @@ use crate::config::Config;
 use dirs;
 use reqwest::blocking::Client;
 use reqwest::header::{LOCATION, USER_AGENT};
-use serde_json::Value;
+use serde_json::{Error, Value};
 use std::fs::File;
 use std::io;
 use std::io::Read;
@@ -11,7 +11,7 @@ use std::io::Read;
 const API: &str = "https://api.soundcloud.com/";
 
 /// Download a song
-pub fn song(config: &Config, url: String) {
+pub fn song(config: &Config, url: String) -> Result<(), Error> {
     let resolve = format!(
         "{}resolve.json?url={}&client_id={}&format=json&_status_code_map[302]=200",
         API, url, config.token
@@ -20,16 +20,18 @@ pub fn song(config: &Config, url: String) {
     let (location, _) = get(String::from(resolve));
 
     let (_, body) = get(location);
-    let json: Value = serde_json::from_str(&body).unwrap();
+    let json: Value = serde_json::from_str(&body)?;
 
     let id = &json["id"];
     let mut name_mp3 = format!("{} - {}.mp3", &json["user"]["username"], &json["title"]);
     let url_track = format!("{}i1/tracks/{}/streams?client_id={}", API, id, config.token);
 
     let (_, body) = get(url_track);
-    let json: Value = serde_json::from_str(&body).unwrap();
+    let json: Value = serde_json::from_str(&body)?;
 
-    let mp3 = json["http_mp3_128_url"].as_str().unwrap();
+    let mp3 = json["http_mp3_128_url"]
+        .as_str()
+        .expect("MP3 URL not found");
 
     name_mp3 = name_mp3
         .replace("/", "_")
@@ -38,13 +40,16 @@ pub fn song(config: &Config, url: String) {
 
     println!("{}", name_mp3);
 
-    download(String::from(mp3), name_mp3);
+    match download(String::from(mp3), name_mp3) {
+        Ok(_) => println!("Successful download!"),
+        Err(_) => println!("File download error"),
+    };
 
-    println!("Successful download!");
+    Ok(())
 }
 
 /// Download playlist
-pub fn playlist(config: &Config, url: String) {
+pub fn playlist(config: &Config, url: String) -> Result<(), Error> {
     let resolve = format!(
         "{}resolve.json?url={}&client_id={}&format=json&_status_code_map[302]=200",
         API, url, config.token
@@ -53,17 +58,23 @@ pub fn playlist(config: &Config, url: String) {
     let (location, _) = get(String::from(resolve));
 
     let (_, body) = get(location);
-    let json: Value = serde_json::from_str(&body).unwrap();
+    let json: Value = serde_json::from_str(&body)?;
 
     let tracks = &json["tracks"];
 
     if tracks.is_array() {
-        for track in tracks.as_array().unwrap() {
-            let object = track.as_object().unwrap();
-            let permalink_url = object.get("permalink_url").unwrap().as_str().unwrap();
-            song(config, String::from(permalink_url));
+        for track in tracks.as_array().expect("Data conversion error") {
+            let object = track.as_object().expect("Data conversion error");
+            let permalink_url = object
+                .get("permalink_url")
+                .expect("Data conversion error")
+                .as_str()
+                .expect("Data conversion error");
+            song(config, String::from(permalink_url)).expect("Failed to get song data");
         }
     }
+
+    Ok(())
 }
 
 /// Function for get requests
@@ -86,13 +97,15 @@ fn get(url: String) -> (String, String) {
 }
 
 /// Function for downloading files
-fn download(url: String, name: String) {
+fn download(url: String, name: String) -> Result<(), String> {
     let audio_path = match dirs::audio_dir() {
         Some(path) => format!("{}/{}", path.display(), name),
-        None => panic!("Home directory not found!"),
+        None => return Err(String::from("Home directory not found!")),
     };
 
-    let mut resp = reqwest::blocking::get(&url).expect("request failed");
-    let mut out = File::create(audio_path).expect("failed to create file");
-    io::copy(&mut resp, &mut out).expect("failed to copy content");
+    let mut resp = reqwest::blocking::get(&url).expect("Request failed");
+    let mut out = File::create(audio_path).expect("Failed to create file");
+    io::copy(&mut resp, &mut out).expect("Failed to copy content");
+
+    Ok(())
 }

@@ -74,11 +74,11 @@ fn main() {
 
     if let Some(matches) = matches.subcommand_matches("song") {
         let url = matches.value_of("URL").unwrap();
-        downloader::song(&config, String::from(url));
+        downloader::song(&config, String::from(url)).expect("Failed to get song data");
     }
 
     if let Some(matches) = matches.subcommand_matches("playlist") {
         let url = matches.value_of("URL").unwrap();
-        downloader::playlist(&config, String::from(url));
+        downloader::playlist(&config, String::from(url)).expect("Failed to get playlist data");
     }
 }
