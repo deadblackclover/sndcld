@@ -1,6 +1,6 @@
 [package]
 name = "sndcld"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["DEADBLACKCLOVER <deadblackclover@protonmail.com>"]
 description = "Soundcloud downloader made using Rust"
 edition = "2018"
