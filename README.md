@@ -13,7 +13,7 @@ If you have Rust: `cargo install sndcld`
 ## Usage
 
 ```bash
-sndcld 0.1.0
+sndcld 0.2.1
 DEADBLACKCLOVER <deadblackclover@protonmail.com>
 Soundcloud downloader made using Rust
 
